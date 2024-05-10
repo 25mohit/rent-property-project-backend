@@ -1,25 +1,18 @@
-// Model.js
-
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
-const userSchema = new mongoose.Schema({
-  fullName: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  mobileNo: {
-    type: String
+const userSchema =  mongoose.Schema({
+  fullName:String,
+  email: String,
+  password: String,
+  mobileNo: String,
+  referCode: String,
+  uuid: {
+      type: String,
+      default: uuidv4,
+      unique: true
   }
-});
+}, {timestamps: true});
 
 const User = mongoose.model('User', userSchema);
 
