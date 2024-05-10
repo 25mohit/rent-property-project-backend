@@ -21,11 +21,12 @@ const RegisterUser = asyncHandler(async (req, res) => {
     fullName,
     email,
     password: hashedPassword,
-    mobileNo
+    mobileNo,
+    referCode
   });
 
   if (newUser) {
-    return res.status(201).json({ status: true, m: "ss", d: newUser});
+    return res.status(201).json({ status: true, m: "ss"});
   } else {
     return res.status(200).json({ status: false, m: "un" });
   }

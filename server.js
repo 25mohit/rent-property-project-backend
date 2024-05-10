@@ -3,8 +3,8 @@ const app = express();
 require('dotenv').config()
 const mongoose = require('mongoose');
 const UserRoute = require('./Routes/UserRoutes');
+const UtilsRoute = require('./Routes/UtilsRoute')
 mongoose.set('strictQuery', true)
-
 
 // Body parser middleware
 app.use(express.urlencoded({ extended: false }))
@@ -12,6 +12,7 @@ app.use(express.json());
 
 // Routes
 app.use('/users', UserRoute);
+app.use('/utils', UtilsRoute);
 
 const PORT = process.env.PORT || 5000;
 // Connect to MongoDB
