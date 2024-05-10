@@ -32,4 +32,31 @@ const RegisterUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { RegisterUser };
+const LoginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body
+
+  if(!email || !password ) {
+    return res.status(200).json({status: false, m:"re"})
+  }
+
+  const user = await User.findOne({ email }).select('-_id -mobileNo -referCode -createdAt -updatedAt')
+
+  if(!user){
+    return res.status(200).json({status: false, m: "nf"})
+  }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  
+  if (!isPasswordValid) {
+    return res.status(200).json({ status: false, m:"iv" });
+  }
+
+  const payload = {
+    fullName: user.fullName,
+    email: user.email,
+    uuid: user.uuid,
+  }
+
+  return res.status(200).json({ status: true, m: "ss", d: payload })
+})
+
+module.exports = { RegisterUser, LoginUser };
