@@ -1,6 +1,7 @@
 const expressAsyncHandler = require("express-async-handler")
 const NewItem = require("../Model/NewItemModel")
 const User = require('../Model/UserModel');
+const Notification = require('../Model/NotificationModel')
 
 const AddNewItemController = expressAsyncHandler(async (req, res) => {
     const { id, email, item_name,user_name, item_category, item_sub_category, item_description, item_location, contact_name, contact_mobile } = req.body
@@ -33,19 +34,34 @@ const AddNewItemController = expressAsyncHandler(async (req, res) => {
     // Save the new item to the database
     await newItem.save();
 
+    const sendNotification = new Notification({
+        label: `<span><p>${item_name}</p> has been sent for Review</span>`,
+        type: 's',
+        fresh: true,
+        id
+    })
+    await sendNotification.save()
+
     return res.status(200).json({ status: true, m: "ss" });
 
 
 })
 
-const CreateNotification = expressAsyncHandler(async (req, res) => {
-    const { id, label, type, fresh } = req.body
+const GetNotification = expressAsyncHandler(async (req, res) => {
+    const { id } = req.query
     
-    if( !id || !label || !type || !fresh ){
+    if( !id ){
         return res.status(200).json({status: false, m:"re"})
     }
+
+    const isExists = await Notification.find({id}).select('-_id -id -uuid -updatedAt -__v')
+
+    if(!isExists){
+        return res.status(200).json({status: false, m:"nod"})
+    }
+    return res.status(200).json({status: false, m:"ss", isExists})
 })
 module.exports = {
     AddNewItemController,
-    CreateNotification
+    GetNotification
 }
