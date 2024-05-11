@@ -12,8 +12,6 @@ const AddNewItemController = expressAsyncHandler(async (req, res) => {
 
     const isExists = await User.findOne({ email, uuid: id})
 
-    console.log("isExists", isExists);
-
     if(!isExists){
         return res.status(200).json({status: false, m:"nf"})
     }
