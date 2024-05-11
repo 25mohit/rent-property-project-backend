@@ -20,8 +20,6 @@ const CheckEmailRecord = asyncHandler(async (req, res) => {
 
     const otpCheckRes = await Otp.findOne({email})
     
-    console.log("otpCheckRes", otpCheckRes);
-
     if(otpCheckRes){
         await Otp.findOneAndDelete({ email });
         return res.status(200).json({status: false, m:"cl" , field: 'otp'})
@@ -36,7 +34,6 @@ const CheckEmailRecord = asyncHandler(async (req, res) => {
     if(!saveOTP){
         return res.status(200).json({status: false, m:"er"})
     }
-    console.log("OTP Saved");
     
     const mailOptions = {
         from: {
@@ -53,9 +50,6 @@ const CheckEmailRecord = asyncHandler(async (req, res) => {
     if(!respo){
         return res.status(200).json({status: false, m:"er"})
     } 
-    console.log("respo", respo);
-    console.log("email SENT");
-    console.log("email", email, isExists);
 
     return res.status(200).json({status: true, m:"ss"})
 })
@@ -100,8 +94,6 @@ const ForgotPassword = asyncHandler(async (req, res) => {
 
     const otpCheckRes = await Otp.findOne({email})
     
-    console.log("otpCheckRes", otpCheckRes);
-
     if(otpCheckRes){
         await Otp.findOneAndDelete({ email });
         return res.status(200).json({status: false, m:"cl" , field: 'otp'})
@@ -116,7 +108,6 @@ const ForgotPassword = asyncHandler(async (req, res) => {
     if(!saveOTP){
         return res.status(200).json({status: false, m:"er"})
     }
-    console.log("OTP Saved");
     
     const mailOptions = {
         from: {
@@ -129,7 +120,6 @@ const ForgotPassword = asyncHandler(async (req, res) => {
         html: `<p>Hi, </p></br><p>We received your request for Login on <b>Sell Goods</b></p></br><p>Your one-time-password is: <b style="color: red">${newOtp}</b></p><p>If you didn't request this code, you can safely ignore this email. Someone else might have types your email address by mistake.</p></br><div style="display: grid; grid-template-columns: 1fr"><span>Thanks</span><span>The Sell Goods Teams</span><span>Jaipur, Rajasthan</span></div>`
     };
     const respo = await transporter.sendMail(mailOptions)
-
     if(!respo){
         return res.status(200).json({status: false, m:"er"})
     } 
@@ -137,6 +127,23 @@ const ForgotPassword = asyncHandler(async (req, res) => {
 })
 
 const UpdatePassword = asyncHandler(async (req, res) => {
+    const { password, id, email } = req.body
+
+    if(!password || !id || !email){
+        return res.status(200).json({status: false, m:"re"})
+    }
+
+    const isExists = await User.findOne({ email, uuid: id})
+    
+    if(!isExists){
+        return res.status(200).json({status: false, m:"iv"})
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    isExists.password = hashedPassword
+    await isExists.save()
+
+    return res.status(200).json({status: true, m:"ss"})
 
 })
 
