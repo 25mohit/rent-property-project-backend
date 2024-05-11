@@ -78,13 +78,13 @@ const VerifyOTP = asyncHandler(async (req, res) => {
 })
 
 const ForgotPassword = asyncHandler(async (req, res) => {
-    const { email, id } = req.body
+    const { email } = req.body
 
-    if(!email || !id ){
+    if(!email ){
         return res.status(200).json({status: false, m:"re"})
     }
 
-    const isExists = await User.find({uuid: id, email})
+    const isExists = await User.find({email})
 
     if(!isExists?.length){
         return res.status(200).json({status: false, m:"nf"})
