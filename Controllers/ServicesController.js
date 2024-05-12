@@ -84,7 +84,6 @@ const AddListingToWhishlist = expressAsyncHandler(async (req, res) => {
         uID, sID, lID, listingData
     });
 
-    // Save the new item to the database
     await whishlist.save();
 
     return res.status(200).json({status: true, m:"ss"})
@@ -115,7 +114,6 @@ const RemoveWhishlist = expressAsyncHandler(async (req, res) => {
         return res.status(400).json({ status: false, message: "re" });
     }
 
-    // Find the item in the wishlist
     const wishlistItem = await WhishList.findOneAndDelete({ uID, lID, sID });
 
     if (!wishlistItem) {
