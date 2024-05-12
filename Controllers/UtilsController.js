@@ -156,25 +156,21 @@ const ChangePassword = asyncHandler(async (req, res) => {
 
     const isExists = await User.findOne({ email, uuid: id }).select('-fullName -email -mobileNo -uuid -referCode -createdAt -updatedAt -__v')
     
-    console.log("isExists", isExists);
     if(!isExists){
         return res.status(200).json({status: false, m:"iv"})
     }
     const passwordMatch = await bcrypt.compare(currentPassword, isExists.password)
 
-    console.log("passwordMatch", passwordMatch);
     if (!passwordMatch) {
-        return res.status(200).json({ status: false, m: "inv" }) // "wp" stands for wrong password
+        return res.status(200).json({ status: false, m: "inv" })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log("hashedPassword", hashedPassword);
     isExists.password = hashedPassword
     await isExists.save()
 
     return res.status(200).json({status: true, m:"ss"})
-
 })
 
 module.exports = { CheckEmailRecord, VerifyOTP, ForgotPassword, UpdatePassword, ChangePassword };
