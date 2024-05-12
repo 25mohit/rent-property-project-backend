@@ -111,13 +111,13 @@ const RemoveWhishlist = expressAsyncHandler(async (req, res) => {
     const { uID, lID, sID } = req.body;
 
     if (!uID || !lID || !sID) {
-        return res.status(400).json({ status: false, message: "re" });
+        return res.status(200).json({ status: false, message: "re" });
     }
 
     const wishlistItem = await WhishList.findOneAndDelete({ uID, lID, sID });
 
     if (!wishlistItem) {
-        return res.status(404).json({ status: false, m:"iv" });
+        return res.status(200).json({ status: false, m:"iv" });
     }
 
     return res.status(200).json({ status: true, m:"ss" });
