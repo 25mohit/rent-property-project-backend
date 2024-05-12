@@ -1,6 +1,7 @@
 const expressAsyncHandler = require("express-async-handler")
 const NewItem = require("../Model/NewItemModel")
 const User = require('../Model/UserModel');
+const WhishList = require("../Model/WhishListModel")
 const Notification = require('../Model/NotificationModel')
 
 const AddNewItemController = expressAsyncHandler(async (req, res) => {
@@ -60,10 +61,56 @@ const GetNotification = expressAsyncHandler(async (req, res) => {
 })
 
 const AddListingToWhishlist = expressAsyncHandler(async (req, res) => {
-    const { uID, lID, sID } = req.body
+    const { uID, lID, sID, listingData } = req.body
+
+    if(!uID || !lID || !sID || Object.keys(listingData).length !==4){
+        return res.status(200).json({status: false, m:"re"})
+    }
+
+    const isListingExists = await NewItem.findOne({ uuid: lID, id: sID })
+
+    if(!isListingExists){
+        return res.status(200).json({status: false, m:"nf"})
+    }
+    const isExists = await WhishList.findOne({ lID, uID})
+
+    console.log("isExists", isExists);
+
+    if(isExists){
+        return res.status(200).json({status: false, m:"ex"})
+    }
+    
+    const whishlist = new WhishList({
+        uID, sID, lID, listingData
+    });
+
+    // Save the new item to the database
+    await whishlist.save();
+
+    return res.status(200).json({status: true, m:"ss"})
+
 })
+
+const GetWhishlistListing = expressAsyncHandler(async (req, res) => {
+    const { id } = req.query
+
+    if(!id && Object.keys(req.query)?.[0] !== "id"){
+        return res.status(200).json({ status: false, m: "re"})
+    }
+
+    const isExists = await WhishList.find({uID: id}).select('-_id -uID -lID -sID -updatedAt -__v')
+
+    if(!isExists?.length){
+        return res.status(200).json({ status: false, m: "nf"})
+    }
+
+    return res.status(200).json({ status: true, m: "ss", d: isExists})
+
+})
+
 module.exports = {
     AddNewItemController,
     GetNotification,
-    AddListingToWhishlist
+    AddListingToWhishlist,
+    GetWhishlistListing
 }

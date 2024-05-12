@@ -28,6 +28,6 @@ const itemSchema =  mongoose.Schema({
 }
 }, {timestamps: true});
 
-const NewItem = mongoose.model('new-items', itemSchema);
+const NewListing = mongoose.model('listing', itemSchema);
 
-module.exports = NewItem;
+module.exports = NewListing;
