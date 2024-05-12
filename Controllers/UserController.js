@@ -1,19 +1,28 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../Model/UserModel');
 const bcrypt = require('bcryptjs');
+const { generateRandomString } = require('../Utils/Functions');
 
 const RegisterUser = asyncHandler(async (req, res) => {
-  const { fullName, email, password, mobileNo, referCode } = req.body;
+  const { fullName, email, password, mobileNo } = req.body;
 
   if( !fullName || !email || !password ){
     return res.status(400).json({status: false, m:"re"})
   }
+  
   const existingUser = await User.findOne({ $or: [{ email }, { mobileNo }] });
 
   if (existingUser) {
     return res.status(400).json({status: false, m:"ex"})
   }
 
+  let uniqueReferCode = generateRandomString()
+
+  const isReferExists = await User.findOne({referCode: uniqueReferCode})
+
+  if(isReferExists){
+    uniqueReferCode = generateRandomString()
+  }
   const hashedPassword = await bcrypt.hash(password, 10);
   
   const newUser = await User.create({
@@ -21,7 +30,7 @@ const RegisterUser = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
     mobileNo,
-    referCode
+    referCode: uniqueReferCode
   });
 
   if (newUser) {
