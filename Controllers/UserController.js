@@ -16,7 +16,6 @@ const RegisterUser = asyncHandler(async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
   
-  // Create a new user
   const newUser = await User.create({
     fullName,
     email,
@@ -59,4 +58,39 @@ const LoginUser = asyncHandler(async (req, res) => {
   return res.status(200).json({ status: true, m: "ss", d: payload })
 })
 
-module.exports = { RegisterUser, LoginUser };
+const UpdateProfile = asyncHandler(async (req, res) => {
+  const { id, email, mobile, name } = req.body
+
+  if( !id || !email || ( !mobile && !name)){
+    return res.status(200).json({status: false, m:"re"})
+  }
+
+  if(mobile){
+    const isMobileExists = await User.findOne({ mobileNo: mobile}).select('-_id -password -uuid -createdAt -updatedAt -__v -fullName -email -referCode')
+
+    if(isMobileExists){
+      return res.status(200).json({status: false, m:"ex"})
+    }
+  }
+  const isExists = await User.findOne({ uuid: id, email })
+
+  if(!isExists){
+    return res.status(200).json({status: false, m:"nf"})
+  }
+
+  let updatedFields = {};
+
+  if (mobile) {
+    updatedFields.mobileNo = mobile;
+  }
+
+  if (name) {
+    updatedFields.fullName = name;
+  }
+
+  await User.updateOne({ uuid: id, email }, { $set: updatedFields });
+
+  return res.status(200).json({status: true, m:"ss"})
+})
+
+module.exports = { RegisterUser, LoginUser, UpdateProfile };
