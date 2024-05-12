@@ -4,9 +4,9 @@ const User = require('../Model/UserModel');
 const Notification = require('../Model/NotificationModel')
 
 const AddNewItemController = expressAsyncHandler(async (req, res) => {
-    const { id, email, item_name,user_name, item_category, item_sub_category, item_description, item_location, contact_name, contact_mobile } = req.body
-
-    if(id, !email, !item_name, !user_name, !item_category, !item_sub_category, !item_description, !item_location, !contact_name, !contact_mobile){
+    const { id, email, item_name,user_name, item_category, item_sub_category, item_description, item_location, contact_name, contact_mobile } = req.body  
+  
+    if(!id || !email || !item_name || !user_name || !item_category || !item_sub_category || !item_description || Object.keys(item_location)?.length !== 4 || !contact_name || !contact_mobile){
         return res.status(200).json({status: false, m:"re"})
     }
 
@@ -58,7 +58,12 @@ const GetNotification = expressAsyncHandler(async (req, res) => {
     }
     return res.status(200).json({status: false, m:"ss", isExists})
 })
+
+const AddListingToWhishlist = expressAsyncHandler(async (req, res) => {
+    const { uID, lID, sID } = req.body
+})
 module.exports = {
     AddNewItemController,
-    GetNotification
+    GetNotification,
+    AddListingToWhishlist
 }
