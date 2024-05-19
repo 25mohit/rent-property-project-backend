@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json());
 
 // Routes
-var whitelist = ['http://localhost:3000']
+var whitelist = ['http://localhost:3000', 'https://relicet-dev.netlify.app']
 var corsOptions = {
     origin: function (origin, callback) {
       if (whitelist.indexOf(origin) !== -1) {
