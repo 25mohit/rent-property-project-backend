@@ -173,4 +173,4 @@ const ChangePassword = asyncHandler(async (req, res) => {
     return res.status(200).json({status: true, m:"ss"})
 })
 
-module.exports = { CheckEmailRecord, VerifyOTP, ForgotPassword, UpdatePassword, ChangePassword };
+module.exports = { CheckEmailRecord, VerifyOTP, ForgotPassword, UpdatePassword, ChangePassword }
