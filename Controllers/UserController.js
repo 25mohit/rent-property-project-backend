@@ -4,13 +4,13 @@ const bcrypt = require('bcryptjs');
 const { generateRandomString } = require('../Utils/Functions');
 
 const RegisterUser = asyncHandler(async (req, res) => {
-  const { fullName, email, password, mobileNo } = req.body;
+  const { name, email, password, referCode } = req.body;
 
-  if( !fullName || !email || !password ){
+  if( !name || !email || !password ){
     return res.status(400).json({status: false, m:"re"})
   }
   
-  const existingUser = await User.findOne({ $or: [{ email }, { mobileNo }] });
+  const existingUser = await User.findOne({ $or: [{ email }] });
 
   if (existingUser) {
     return res.status(400).json({status: false, m:"ex"})
@@ -26,10 +26,9 @@ const RegisterUser = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   
   const newUser = await User.create({
-    fullName,
+    fullName: name,
     email,
     password: hashedPassword,
-    mobileNo,
     referCode: uniqueReferCode
   });
 

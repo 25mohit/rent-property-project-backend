@@ -13,7 +13,7 @@ const CheckEmailRecord = asyncHandler(async (req, res) => {
     const isExists = await User.findOne({ email })
 
     if(isExists){
-        return res.status(200).json({status: true, m: "ex"})
+        return res.status(200).json({status: false, m: "ex"})
     }
 
     const newOtp = generateOTP()
