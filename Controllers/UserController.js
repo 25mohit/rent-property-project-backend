@@ -37,7 +37,7 @@ const RegisterUser = asyncHandler(async (req, res) => {
   } else {
     return res.status(200).json({ status: false, m: "un" });
   }
-});
+})
 
 const LoginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
